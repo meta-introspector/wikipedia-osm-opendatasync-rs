@@ -1,0 +1,22 @@
+# Rust
+/target/
+/cache
+/data
+Cargo.lock
+
+# Output directories
+/output/
+
+# Environment files
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

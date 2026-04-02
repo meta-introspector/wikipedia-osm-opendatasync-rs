@@ -1,0 +1,92 @@
+# Example batch file for opendatasync
+# Use with: opendatasync --cache-dir ./cache --output-dir ./data batch --batch-file example_batch.toml
+
+# WIKIDATA REQUESTS
+# Each [[wikidata]] entry can fetch entities with custom configuration
+
+# Example 1: Fetch entities with full resolution (default behavior)
+[[wikidata]]
+qids = [
+    "Q30",   # United States
+    "Q1342", # Pittsburgh
+    "Q16",   # Canada
+]
+# resolve_headers = "all"       # Resolve property IDs to names: "none", "all", "select" (default: "all")
+# resolve_data = "all"          # Resolve data QIDs to names: "none", "all", "select" (default: "all")
+# keep_qids = true              # Keep QID columns alongside resolved names (default: true)
+# only_values = true            # In JSON, only include value fields (default: true)
+# traverse_osm = true           # Auto-fetch OSM data from P402/P10689/P11693 (default: true)
+
+# Example 2: Fetch entities without resolution for faster processing
+[[wikidata]]
+qids = ["Q60", "Q62"]  # New York City, San Francisco
+resolve_headers = "none"
+resolve_data = "none"
+traverse_osm = false
+
+# Example 2a: Preserve qualifiers for specific properties (e.g., street addresses with dates)
+[[wikidata]]
+qids = ["Q30"]  # United States
+only_values = true  # Strip id/rank/references but preserve qualifiers for selected properties
+preserve_qualifiers_for = ["P6375", "P969"]  # street address, located at street address
+
+# Example 3: Selective resolution - only resolve specific properties
+[[wikidata]]
+qids = ["Q84"]  # London
+resolve_headers = "select"
+select_headers = ["P31", "P17"]  # instance of, country
+resolve_data = "select"
+select_data = ["Q6256", "Q515"]  # country, city
+
+# Example 4: Load QIDs from a file
+[[wikidata]]
+ids_from_file = "./wikidata_qids.txt"  # One QID per line, lines starting with # are comments
+
+# Example 5: Keep all statement data (id, rank, qualifiers, references)
+[[wikidata]]
+qids = ["Q42"]  # Douglas Adams
+only_values = false  # Preserve all statement metadata
+
+# WIKICOMMONS REQUESTS
+# Each [[wikicommons]] entry fetches category members
+
+# Example 1: Fetch category members with page info
+[[wikicommons]]
+[wikicommons.categorymembers]
+categories = [
+    "Category:Houston, Texas",
+    "Category:Pittsburgh",
+]
+traverse_pageid = true  # Fetch detailed imageinfo for each page (default: false)
+
+# Example 2: Fetch categories from file
+[[wikicommons]]
+[wikicommons.categorymembers]
+ids_from_file = "./wikicommons_categories.txt"  # One category per line
+traverse_pageid = false
+
+# Example 3: Recursively fetch subcategories matching a pattern
+[[wikicommons]]
+[wikicommons.categorymembers]
+categories = ["Bayland Community Center, Houston"]
+recurse_subcategory_pattern = "Houston Open Source Society"  # Regex pattern to match subcategories
+traverse_pageid = true
+
+# OVERPASS (OSM) REQUESTS
+# Each [[overpass]] entry fetches OSM elements by ID
+
+# Example 1: Fetch mixed element types
+[[overpass]]
+nodes = [123456789, 987654321]
+ways = [56065095, 12345678]
+relations = [456789123]
+timeout = 25  # Query timeout in seconds (default: 25)
+
+# Example 2: Fetch with bounding box filter
+[[overpass]]
+ways = [111222333]
+bbox = { south = 40.0, west = -80.0, north = 40.5, east = -79.5 }
+
+# Example 3: Load OSM IDs from file
+[[overpass]]
+ids_from_file = "./osm_ids.txt"  # Format: "node/123", "way/456", "relation/789" (one per line)

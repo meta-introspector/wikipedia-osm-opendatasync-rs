@@ -1,0 +1,41 @@
+[package]
+name = "opendatasync"
+description = "Pull down data from Wikidata, OpenStreetMap, and Wikimedia Commons."
+license = "LicenseRef-ACSL-1.4-or-newer"
+version = "1.2.0"
+edition = "2024"
+
+[dependencies]
+sha2 = "0.10"
+hex = "0.4"
+chrono = "0.4"
+clap = { version = "4.0", features = ["derive"] }
+thiserror = "2.0"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+reqwest-middleware = "0.4"
+reqwest-tracing = "0.5"
+http = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+csv = "1.1"
+toml = "0.9"
+tokio = { version = "1.0", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+async-trait = "0.1"
+task-local-extensions = "0.1"
+futures = "0.3"
+derive_builder = "0.20"
+urlencoding = "2.1"
+sanitize-filename = "0.6"
+regex = "1.0"
+
+[dev-dependencies]
+tempfile = "3.8"
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce parallel code generation units for better optimization
+strip = true        # Strip symbols from binary
+panic = "abort"     # Abort on panic instead of unwinding
